@@ -21,7 +21,7 @@ headers = {
 }
 searchTermWithSpaces = input("Select searchTerm: ")
 searchTerm = searchTermWithSpaces.replace(" ","+")
-url = f"https://www.newegg.com/p/pl?d={searchTerm}&N=4131"
+url = f"https://www.newegg.com/p/pl?d={searchTerm}"
 
 resp = request.urlopen(request.Request(url, headers=headers))
 content_encoding = resp.getheader('Content-Encoding')
@@ -40,7 +40,7 @@ maxPage = int(str(parsedDoc.find("span",class_="list-tool-pagination-text").stro
 
 #traverse different pages 
 for page in range(1, maxPage+1):
-    url = f"https://www.newegg.com/p/pl?d={searchTerm}&N=4131&page={page}"
+    url = f"https://www.newegg.com/p/pl?d={searchTerm}&page={page}"
     resp = request.urlopen(request.Request(url, headers=headers))
     content_encoding = resp.getheader('Content-Encoding')
     data = resp.read()
@@ -61,12 +61,22 @@ for page in range(1, maxPage+1):
 
     for item in items:
         sale = False
+        inStock = True
         parent = item.parent
         if parent.name != "a":
             continue
 
         link = parent['href']
-        price = int(item.find_parent().find_parent().find_parent().find(class_="item-action").find(class_="price-current").strong.string.replace(",",""))
+        try:
+            price = int(item.find_parent().find_parent().find_parent().find(class_="item-action").find(class_="price-current").strong.string.replace(",",""))
+            isComingSoon = False
+        except:
+            isComingSoon = True
+            price = -1
+        stockGet = item.find_parent().find_parent().find_parent().find(class_="item-info").find(class_="item-promo")
+        if stockGet is not None:
+            inStock = False
+        
         priceWas = item.find_parent().find_parent().find_parent().find(class_="item-action").find(class_="price").find(class_="price-was").find(class_="price-was-data")
         imageLink = item.find_parent().find_parent().find_parent().find(class_="item-img").find("img")['src']
         name = item
@@ -83,6 +93,8 @@ for page in range(1, maxPage+1):
         print(sale)
         print(discount)
         print(item.string)
+        print("coming soon: " + str(isComingSoon))
+        print("in stock: " + str(inStock))
         print("============================================================")
 
         
