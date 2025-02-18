@@ -7,8 +7,7 @@ import brotli
 import gzip
 import zlib
 
-def newEggScrape():
-    headers = {
+headers = {
         'Accept': 'text/html, image/avif, image/apng, image/svg+xml, */*;q=0.8',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'en-US, en;q=0.9',
@@ -20,6 +19,8 @@ def newEggScrape():
         'Sec-Fetch-Site': 'none',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
     }
+
+def newEggScrape():
     searchTermWithSpaces = input("Select searchTerm: ")
     searchTerm = searchTermWithSpaces.replace(" ","+")
     url = f"https://www.newegg.com/p/pl?d={searchTerm}"
@@ -105,3 +106,5 @@ def newEggScrape():
             print("refurbished? " + str(isRefurbished))
             #parse all info into a data structure
             print("============================================================")
+
+newEggScrape()
